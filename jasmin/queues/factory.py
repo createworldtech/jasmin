@@ -50,7 +50,16 @@ class AmqpFactory(ClientFactory):
         self.connectionRetry = True
 
         self.exitDeferred = defer.Deferred()
-        if self.channelReady is None:
+
+        try:
+            # Check if connectDeferred is already set
+            self.channelReady
+
+            # Reset deferred if it were called before
+            if self.channelReady.called is True:
+                self.channelReady = defer.Deferred()
+        except AttributeError:
+            # Set channelReady
             self.channelReady = defer.Deferred()
 
         try:
@@ -178,7 +187,11 @@ class AmqpFactory(ClientFactory):
 
         # Flag that the connection is open.
         self.connected = True
-        self.channelReady.callback(self)
+        try:
+            self.channelReady.callback(self)
+        except defer.AlreadyCalledError:
+            self.log.warn("Caught AlreadyCalledError in _channel_open. Pass.")
+            pass
 
     def _channel_open_failed(self, error):
         self.log.error("Channel open failed: %s", error)
@@ -190,7 +203,7 @@ class AmqpFactory(ClientFactory):
         self.log.error("AMQP authentication failed: %s", error)
 
     def disconnect(self, reason=None):
-        self.channelReady = False
+        self.channelReady = None
 
         if self.client is not None:
             return self.client.close(reason)
