@@ -138,7 +138,8 @@ class AmqpFactory(ClientFactory):
         else:
             # And try to connect again
             self.preConnect()
-            self.reconnectDeferred.callback(self)
+            if self.reconnectDeferred is not None:
+                self.reconnectDeferred.callback(self)
             self.log.info("Reconnecting...")
             connector.connect()
 
