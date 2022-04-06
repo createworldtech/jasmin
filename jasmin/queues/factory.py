@@ -20,6 +20,8 @@ class AmqpFactory(ClientFactory):
         self.config = config
         self.channelReady = None
 
+        self.reconnectDeferred = None
+
         self.delegate = TwistedDelegate()
 
         self.amqp = None  # The protocol instance.
@@ -52,7 +54,7 @@ class AmqpFactory(ClientFactory):
         self.exitDeferred = defer.Deferred()
 
         try:
-            # Check if connectDeferred is already set
+            # Check if channelReady is already set
             self.channelReady
 
             # Reset deferred if it were called before
@@ -77,6 +79,11 @@ class AmqpFactory(ClientFactory):
 
     def startedConnecting(self, connector):
         self.log.info("Connecting to %s ...", connector.getDestination())
+
+    def getReconnectDeferred(self):
+        """Get a Deferred so you can be notified on reconnection
+        """
+        return self.reconnectDeferred
 
     def getExitDeferred(self):
         """Get a Deferred so you can be notified on disconnect and exited
@@ -131,6 +138,8 @@ class AmqpFactory(ClientFactory):
         else:
             # And try to connect again
             self.preConnect()
+            self.reconnectDeferred.callback(self)
+            self.log.info("Reconnecting...")
             connector.connect()
 
     def _connect(self):
@@ -165,6 +174,9 @@ class AmqpFactory(ClientFactory):
     def _authenticated(self, ignore):
         """Called when the connection has been authenticated."""
         self.log.info("Successfull authentication")
+
+        # Reconnect success, reset deferred
+        self.reconnectDeferred = defer.Deferred()
 
         # Get a channel.
         d = self.client.channel(1)
