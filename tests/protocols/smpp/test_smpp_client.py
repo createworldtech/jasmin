@@ -4,11 +4,9 @@ These are test cases for only Jasmin's code, smpp.twisted tests are not included
 """
 
 import copy
-import random
 
 from unittest.mock import Mock
 from testfixtures import LogCapture
-from twisted.internet import defer
 from twisted.internet.protocol import Factory
 from twisted.python import log
 from twisted.trial.unittest import TestCase
@@ -81,6 +79,10 @@ class SimulatorTestCase(TestCase):
         self.SMSCPort.stopListening()
 
     def composeMessage(self, characters, length):
+        # Convert set to sequence
+        # c.f. https://docs.python.org/3/library/random.html#random.sample
+        characters = list(characters)
+
         if length <= len(characters):
             return b''.join(random.sample(characters, length).encode())
         else:

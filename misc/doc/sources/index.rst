@@ -8,14 +8,23 @@ Based on strong message routing algorithms, Jasmin provides flexibility to defin
 
 Jasmin is written in Python and Twisted framework for serving highly scalable applications, SMS message delivery can be done through HTTP and SMPP protocols, intelligent routing can be configured in real-time through an API, cli interface or a web backend [1]_.
 
+.. figure:: https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg
+   :target: https://www.digitalocean.com/
+   :alt: Powered by DigitalOcean
+   :align: Center
+   :width: 210px
+   :scale: 80 %
+
 Features
 ********
+
 * SMPP Client / Server
 * HTTP Client / Server
 * Based on AMQP broker for store&forward mechanisms
 * Advanced message routing : Simple & static, *Roundrobin*, *Failover*, *Leastcost* ..
 * Standard message filtering: *TransparentFilter*, *ConnectorFilter*, *UserFilter* ..
 * Advanced message filtering: *EvalPyFilter*
+* Advanced messaging/routing mechanisms enabled by message *interceptor*
 * Flexible billing support
 * Supports Unicode (UTF-8 / 16) for sending out multilingual SMS
 * Supports easy creation and sending of specialized/binary SMS like mono Ringtones, WAP Push, Vcards
@@ -29,6 +38,8 @@ Getting started
    :columns: 2
 
    * :doc:`/installation/index` -- Install and run Jasmin SMS Gateway
+   * :ref:`monitoring_grafana` -- Install Grafana for monitoring
+   * :ref:`install_k8s` -- Kubernetes cluster *how-to*
    * :ref:`Examples_Receiving_SMS` -- Basic push/pull SMS application via HTTP
    * :doc:`/apis/rest/index` -- RESTful API technical specification
    * :doc:`/apis/smpp-server/index` -- SMPP Server API technical specification
@@ -44,7 +55,7 @@ Full contents
    /support/index
    /installation/index
    /apis/rest/index
-   /apis/ja-http/index
+   /apis/http/index
    /apis/smpp-server/index
    /routing/index
    /interception/index
